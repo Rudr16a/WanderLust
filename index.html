@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust Challenge</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50E3C2;
+            --dark: #2C3E50;
+            --light: #F5F6FA;
+            --accent: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .main-content {
+            margin-top: 40px;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button.large {
+            font-size: 20px;
+            padding: 16px 32px;
+        }
+
+        .activity-card {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .activity-card.visible {
+            display: block;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .difficulty.easy {
+            background: #ABEBC6;
+            color: #196F3D;
+        }
+
+        .difficulty.medium {
+            background: #FAD7A0;
+            color: #9C640C;
+        }
+
+        .difficulty.hard {
+            background: #F5B7B1;
+            color: #943126;
+        }
+
+        .quest-steps {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        .quest-steps li {
+            margin-bottom: 10px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .achievement {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">Wanderlust 🚀</div>
+                <div>
+                    <button class="button" onclick="showProfile()">Profile</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <h2>Generate Your Adventure</h2>
+                <p>Ready to explore Churchgate, Mumbai?</p>
+                <button class="button large" onclick="generateActivity()">Generate a Wander</button>
+            </div>
+
+            <div class="activity-card card" id="activityCard">
+                <span class="difficulty" id="activityDifficulty">Medium</span>
+                <h3 id="activityTitle">Activity Title</h3>
+                <p id="activityDescription">Activity description will appear here.</p>
+                <p>Time Estimate: <span id="activityTime">2 hours</span></p>
+                <div style="margin-top: 20px">
+                    <button class="button" onclick="completeActivity()">Complete</button>
+                    <button class="button" style="background: var(--secondary)" onclick="saveActivity()">Save for Later</button>
+                </div>
+            </div>
+
+            <div class="card" id="profileSection" style="display: none;">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('stats')">Stats</div>
+                    <div class="tab" onclick="switchTab('achievements')">Achievements</div>
+                </div>
+
+                <div class="tab-content active" id="statsContent">
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <h3>Points</h3>
+                            <p id="pointsDisplay">150</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Completed</h3>
+                            <p id="completedDisplay">5</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Streaks</h3>
+                            <p id="streaksDisplay">3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="achievementsContent">
+                    <div class="achievements">
+                        <div class="achievement">
+                            <h4>Mumbai Foodie</h4>
+                            <p>5/5 food activities</p>
+                        </div>
+                        <div class="achievement">
+                            <h4>Urban Explorer</h4>
+                            <p>2/3 hard quests</p>
+                        </div>
+                        <div class="achievement">
+                            <h4>Culture Vulture</h4>
+                            <p>3/5 cultural visits</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const activities = {
+            food: [
+                {
+                    title: "Local Food Adventure",
+                    description: "Try vada pav at Churchgate station",
+                    difficulty: "easy",
+                    time: "30 minutes"
+                },
+                {
+                    title: "Street Food Trail",
+                    description: "Complete the street food trail - CST to Crawford",
+                    difficulty: "hard",
+                    time: "4 hours"
+                }
+            ],
+            culture: [
+                {
+                    title: "Architecture Tour",
+                    description: "Gothic architecture photo walk in Fort area",
+                    difficulty: "medium",
+                    time: "2 hours"
+                },
+                {
+                    title: "Art Explorer",
+                    description: "Find street art in Kala Ghoda",
+                    difficulty: "medium",
+                    time: "1.5 hours"
+                }
+            ],
+            adventure: [
+                {
+                    title: "Evening Explorer Quest",
+                    description: "Multi-step adventure:\n1. Coffee at Starbucks Churchgate\n2. Find street art in Kala Ghoda\n3. Dinner at Baghdadi",
+                    difficulty: "medium",
+                    time: "3 hours"
+                }
+            ]
+        };
+
+        let points = 150;
+        let completed = 5;
+        let streaks = 3;
+
+        function generateActivity() {
+            const categories = ['food', 'culture', 'adventure'];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            const activity = activities[category][Math.floor(Math.random() * activities[category].length)];
+
+            document.getElementById('activityTitle').textContent = activity.title;
+            document.getElementById('activityDescription').textContent = activity.description;
+            document.getElementById('activityTime').textContent = activity.time;
+            document.getElementById('activityDifficulty').textContent = activity.difficulty;
+            document.getElementById('activityDifficulty').className = `difficulty ${activity.difficulty}`;
+            
+            document.getElementById('activityCard').classList.add('visible');
+        }
+
+        function completeActivity() {
+            points += 50;
+            completed += 1;
+            updateStats();
+            alert('Activity completed! +50 points');
+        }
+
+        function saveActivity() {
+            alert('Activity saved for later!');
+        }
+
+        function showProfile() {
+            const profileSection = document.getElementById('profileSection');
+            profileSection.style.display = profileSection.style.display === 'none' ? 'block' : 'none';
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('pointsDisplay').textContent = points;
+            document.getElementById('completedDisplay').textContent = completed;
+            document.getElementById('streaksDisplay').textContent = streaks;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            const selectedTab = document.querySelector(`.tab:nth-child(${tab === 'stats' ? '1' : '2'})`);
+            const selectedContent = document.getElementById(`${tab}Content`);
+
+            selectedTab.classList.add('active');
+            selectedContent.classList.add('active');
+        }
+    </script>
+</body>
+</html>
